@@ -1,0 +1,48 @@
+import axios from "axios";
+
+const AUTH_BASE_URL = import.meta.env.VITE_AUTH_BASE_URL;
+const CLIENT_ID = import.meta.env.VITE_CLIENT_ID;
+const CLIENT_SECRET = import.meta.env.VITE_CLIENT_SECRET;
+
+export async function login(username, password) {
+  const params = new URLSearchParams();
+  params.append("grant_type", "password");
+  params.append("client_id", CLIENT_ID);
+  params.append("client_secret", CLIENT_SECRET);
+  params.append("username", username);
+  params.append("password", password);
+
+  const response = await fetch(`${AUTH_BASE_URL}/token/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body: params,
+  });
+
+  if (!response.ok) {
+    throw new Error("Error en la autenticación");
+  }
+
+  return response.json();
+}
+
+export async function logout() {
+  const token = localStorage.getItem("access_token");
+  if (!token) return;
+
+  const params = new URLSearchParams();
+  params.append("token", token);
+  params.append("client_id", CLIENT_ID);
+  params.append("client_secret", CLIENT_SECRET);
+
+  await axios.post(`${AUTH_BASE_URL}/revoke_token/`, params, {
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+  });
+
+  localStorage.removeItem("access_token");
+}
+
+

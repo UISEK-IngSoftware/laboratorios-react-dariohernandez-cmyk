@@ -7,3 +7,22 @@ export const fetchPokemonData = async () => {
   console.log(response.data);
   return response.data;
 };
+
+export const addPokemon = async (pokemon) => {
+  const token = localStorage.getItem("access_token");
+  const response = await axios.post(`${API_BASE_URL}/pokemon`, pokemon, {
+    headers: {
+      Authorization: `Bearer ${token}`,   
+    },
+  });
+  return response.data;
+}
+export const deletePokemon = async (id) => {
+  const token = localStorage.getItem("access_token");
+  const response = await axios.delete(`${API_BASE_URL}/pokemon/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,   
+    },
+  });
+  return response.data;
+}
